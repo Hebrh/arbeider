@@ -1,0 +1,27 @@
+[package]
+name = "ariberder"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://lipicoder.github.io/alberder"
+documentation = "https://lipicoder.github.io/alberder"
+repository = "https://github.com/lipicoder/alberder"
+readme = "README.md"
+description = "A simple, fast, and lightweight task runner for Python"
+
+[package.metadata.maturin]
+name = "arbeider._internal"
+
+[dependencies]
+tokio = { version = "1.24.1", features = ["full"] }
+uuid = "1.2.2"
+pyo3 = { version = "0.18.0" , features = ["auto-initialize",
+    "extension-module", "abi3", "abi3-py311"]}
+clap = {version = "4.0.26", features = ["derive", "cargo"]}
+
+[build-dependencies]
+pyo3-build-config = "0.18.0"
+
+[lib]
+name = "alberder"
+crate-type = ["cdylib", "rlib"]

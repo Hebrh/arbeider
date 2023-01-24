@@ -1,4 +1,5 @@
 from . import _version
+from ._internal import Stage
 
 __version__ = _version.get_versions()['version']
 
@@ -9,3 +10,4 @@ def run():
 
 
 __all__ = ["run"]
+

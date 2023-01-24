@@ -1,1 +1,1 @@
-src/arbeider/_version.py export-subst
+python/arbeider/_version.py export-subst
