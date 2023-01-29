@@ -4,7 +4,7 @@ pub mod builder;
 mod dropper;
 pub mod worker;
 pub mod task;
-mod indicator;
+pub mod indicator;
 
 use stage::Stage;
 
