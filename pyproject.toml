@@ -49,7 +49,7 @@ jobs = 2
 
 [tool.black]
 line-length = 88
-target-version = ['py310', 'py311']
+target-version = ['py311']
 # We use preview style for formatting Black itself. If you
 # want stable formatting across releases, you should keep
 # this off.

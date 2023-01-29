@@ -1,5 +1,10 @@
 //! Worker Library.
-mod stage;
+pub mod stage;
+pub mod builder;
+mod dropper;
+pub mod worker;
+pub mod task;
+mod indicator;
 
 use stage::Stage;
 
@@ -7,7 +12,7 @@ use stage::Stage;
 use pyo3::prelude::*;
 
 #[pymodule]
-pub fn _internal(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+pub fn internal(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     // the pymodule class to make the rustPyFunctions available
     m.add_class::<Stage>()?;
     Ok(())
