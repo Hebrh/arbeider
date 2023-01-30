@@ -2,6 +2,8 @@
 
 use rand;
 use rand::Rng;
+use chrono::NaiveDate;
+use crate::mock::price::price;
 
 /// Shanghai Stock Exchange
 pub const SH_HEADER: [&str; 4]  = ["600", "601", "603", "605"];
@@ -11,6 +13,23 @@ pub const SZ_HEADER: [&str; 2]  = ["000", "002"];
 pub const CY_HEADER: [&str; 1]  = ["300"];
 /// Tech board stock exchange. 科创板
 pub const KB_HEADER: [&str; 1]  = ["688"];
+
+/// Stock price series
+pub struct StockPrice{
+    /// The code of the stock.
+    code: String,
+    /// The price of the stock.
+    price: Vec<f64>,
+}
+
+impl StockPrice{
+    pub fn new(start:NaiveDate, end: NaiveDate )-> StockPrice{
+        StockPrice{
+            code: code(),
+            price: price(start, end),
+        }
+    }
+}
 
 
 /// mock stock code
