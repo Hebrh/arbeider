@@ -5,6 +5,7 @@ mod dropper;
 pub mod worker;
 pub mod task;
 pub mod indicator;
+pub mod mock;
 
 use stage::Stage;
 
