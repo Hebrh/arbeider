@@ -1,7 +1,7 @@
 //! Mock stock price.
 
 use rand;
-use chrono::{NaiveDate, Days};
+use chrono::{NaiveDate, DateTime, Days};
 use rand::Rng;
 
 pub struct DayPrice{
@@ -20,6 +20,23 @@ impl DayPrice{
     }
 }
 
+/// Iterator for DayPrice
+/// # Example
+/// ```rust
+/// use chrono::NaiveDate;
+/// use arbeider::mock::price::DayPrice;
+///
+/// let start = NaiveDate::from_ymd_opt(2016, 1, 1).unwrap();
+/// let end = NaiveDate::from_ymd_opt(2020, 1, 31).unwrap();
+///
+///  // init day price
+///  let mut day_price = DayPrice::new(start, end);
+///
+///  // iterator mock price
+///  while let Some(price) = day_price.next() {
+///      println!("{:?}", price.len());
+///  }
+/// ```
 impl Iterator for DayPrice{
     type Item = Vec<(f64, NaiveDate)>;
 

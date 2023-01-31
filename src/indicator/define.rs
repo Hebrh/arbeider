@@ -41,6 +41,11 @@ pub struct Price {
     date: Vec<NaiveDate>,
 }
 
+// Datetime period.
+pub struct Period {
+    pub start: NaiveDate,
+    pub end: NaiveDate,
+}
 
 /// AssetKind is the type of asset.
 pub enum AssetKind {

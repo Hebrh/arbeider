@@ -1,3 +1,3 @@
 //! indicator data types.
 
-pub mod datatype;
+pub mod define;
