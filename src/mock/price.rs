@@ -43,8 +43,6 @@ impl Iterator for DayPrice{
     fn next(&mut self) -> Option<Self::Item> {
         let batch_size = 1024;
 
-        println!("now: {}, end: {}", self.now, self.end);
-
         // over the end
         if self.now > self.end {
             return None;

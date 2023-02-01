@@ -44,7 +44,7 @@ impl MarketData {
 }
 
 /// Mock market data to parquet file.
-fn mock_parquet(filepath: &str, code: i32, period: Period) {
+pub fn mock_parquet(filepath: &str, code: i32, period: Period) {
     // Init record batch schema
     let field_code= Field::new("code",DataType::Int32, false);
     let field_price= Field::new("price", DataType::Float64, false);
