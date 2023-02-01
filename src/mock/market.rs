@@ -1,68 +1,78 @@
 //! Mock market data.
 
 use std::fs::File;
+use std::path::Path;
 use std::sync::Arc;
 
-use arrow_array::{ArrayRef, Int32Array};
+use arrow_array::{ArrayRef, StringArray, Float64Array, Int32Array, ListArray, Int64Array};
 use arrow_array::RecordBatch;
+use arrow_array::types::Int32Type;
 use arrow_schema::{DataType, Field, Schema};
 use chrono::NaiveDate;
 use parquet::arrow::arrow_writer::ArrowWriter;
 use parquet::file;
 use parquet::file::properties::WriterProperties;
+use parquet::basic::Compression;
+use parquet::basic::LogicalType::List;
 
 use crate::indicator::define::Period;
 use crate::mock::price::{DayPrice, mock_price};
 
-pub struct MarketData<'a> {
-    /// The code of the Security.
-    pub code: &'a str,
+pub struct MarketData {
+    /// The code of the Security. 证券代码
+    pub code: i32,
+    /// The period of the Security.
+    pub period: Period,
     /// The price of the Security.
     pub day_price: Vec<(f64, NaiveDate)>,
 }
 
-impl<'a> MarketData<'a> {
+impl MarketData {
     /// Construct a new market data.
-    fn new(code: &'a str, period: Period) -> MarketData {
+    pub fn new(code: i32, period: Period) -> MarketData {
         MarketData {
             code,
+            period: period.clone(),
             day_price: mock_price(period.start, period.end),
         }
     }
 
     /// Write mock market data to parquet file.
     pub fn write_parquet(&self, filepath: &str) {
-        MarketData::mock_parquet(filepath, self.code, period);
+        mock_parquet(filepath, self.code.clone(), self.period.clone());
     }
 }
 
 /// Mock market data to parquet file.
-fn mock_parquet(filepath: &str, code: &str, period: Period) {
+fn mock_parquet(filepath: &str, code: i32, period: Period) {
     // Init record batch schema
-    let field_price = Field::new("a", DataType::Float64, false);
-    let field_date = Field::new("b", DataType::Date64, false);
+    let field_code= Field::new("code",DataType::Int32, false);
+    let field_price= Field::new("price", DataType::Float64, false);
+    let field_date = Field::new("date", DataType::Int64, false);
 
-    let schema = Schema::new(vec![field_price, field_date]);
+    let schema = Schema::new(vec![field_code, field_price, field_date]);
 
     // Create parquet file
-    let file = File::create(filepath).unwrap();
+    let path = Path::new(filepath);
+    let file = File::create(path).unwrap();
 
     // Write properties with compression
     let props = WriterProperties::builder()
-        .set_compression(file::writer::Compression::SNAPPY)
+        .set_compression(Compression::SNAPPY)
         .build();
 
     // Init day price
     let mut day_price = DayPrice::new(period.start, period.end);
 
     // Setup writer
+    let batch_schema = schema.clone();
     let mut writer = ArrowWriter::try_new(file,
                                           Arc::new(schema),
                                           Some(props)).unwrap();
 
     // Iterate mock and write
     while let Some(price) = day_price.next() {
-        writer.write(&MarketData::mock_record_batch(code, price)).unwrap();
+        writer.write(&mock_batch(batch_schema.clone(), code, price)).unwrap();
     }
 
     // Close writer.
@@ -70,8 +80,9 @@ fn mock_parquet(filepath: &str, code: &str, period: Period) {
 }
 
 /// Mock record batch.
-fn mock_record_batch(code: &str, price: Vec<(f64, NaiveDate)>) -> RecordBatch {
-    let mut code_vec: Vec<&str> = Vec::new();
+fn mock_batch(schema: Schema, code: i32, price: Vec<(f64, NaiveDate)>) ->
+                                                                       RecordBatch {
+    let mut code_vec: Vec<i32> = Vec::new();
     let mut price_vec: Vec<f64> = Vec::new();
     let mut date_vec: Vec<i64> = Vec::new();
 
@@ -81,10 +92,32 @@ fn mock_record_batch(code: &str, price: Vec<(f64, NaiveDate)>) -> RecordBatch {
         date_vec.push(date.and_hms_opt(0, 0, 0).unwrap().timestamp_millis());
     }
 
-    let code_array: ArrayRef = Arc::new(Int32Array::from(code_vec));
-    let price_array: ArrayRef = Arc::new(Int32Array::from(price_vec));
-    let date_array: ArrayRef = Arc::new(Int32Array::from(date_vec));
 
-    RecordBatch::try_new(Arc::new(Schema::empty()),
+    let code_array: ArrayRef = Arc::new(Int32Array::from(code_vec));
+    let price_array: ArrayRef = Arc::new(Float64Array::from(price_vec));
+    let date_array: ArrayRef = Arc::new(Int64Array::from(date_vec));
+
+    RecordBatch::try_new(Arc::new(schema),
                          vec![code_array, price_array, date_array]).unwrap()
+}
+
+#[cfg(test)]
+mod tests {
+    use std::fs::File;
+    use std::io::Read;
+
+    use chrono::NaiveDate;
+
+    use crate::indicator::define::Period;
+    use crate::mock::market::{MarketData, mock_parquet};
+
+    #[test]
+    fn test_mock() {
+        let period = Period {
+            start: NaiveDate::from_ymd_opt(2019, 1, 1).unwrap(),
+            end: NaiveDate::from_ymd_opt(2019, 1, 31).unwrap(),
+        };
+
+        mock_parquet("examples/data/600000.parquet", 600001, period);
+    }
 }

@@ -42,6 +42,7 @@ pub struct Price {
 }
 
 // Datetime period.
+#[derive(Debug, Clone)]
 pub struct Period {
     pub start: NaiveDate,
     pub end: NaiveDate,
@@ -52,4 +53,16 @@ pub enum AssetKind {
     Stock,
     Bond,
     Cash,
+}
+
+/// Category of stock
+pub enum StockCategory {
+    /// Shanghai Stock Exchange
+    SH,
+    /// Shenzhen Stock Exchange
+    SZ,
+    /// Startup Edition stock exchange. 创业版
+    CY,
+    /// Tech board stock exchange. 科创板
+    KB,
 }

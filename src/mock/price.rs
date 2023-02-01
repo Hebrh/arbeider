@@ -5,9 +5,9 @@ use chrono::{NaiveDate, DateTime, Days};
 use rand::Rng;
 
 pub struct DayPrice{
-    start: NaiveDate,
-    end: NaiveDate,
-    now: NaiveDate,
+    pub start: NaiveDate,
+    pub end: NaiveDate,
+    pub now: NaiveDate,
 }
 
 impl DayPrice{
