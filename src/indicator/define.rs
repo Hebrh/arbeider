@@ -1,6 +1,6 @@
 //! indicator data types.
 
-use chrono::{NaiveDate, Utc};
+use chrono::NaiveDate;
 
 /// Portfolio is a set of stocks or other financial assets.
 /// One stock also can be a portfolio.

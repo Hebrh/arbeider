@@ -1,9 +1,6 @@
 /// Task is python code that is executed by the worker
-use std::collections::HashMap;
-use std::vec;
-
 use pyo3::prelude::*;
-use pyo3::types::{IntoPyDict, PyDict, PyString, PyTuple, PyBytes};
+use pyo3::types::{PyDict, PyString, PyTuple, PyBytes};
 
 
 /// Task
@@ -24,15 +21,15 @@ impl Task {
     /// Execute the task
     pub fn run(&self) -> PyResult<()> {
         Python::with_gil(|py| {
-            let key1 = "key1";
-            let val1 = 1;
-            let key2 = "key2";
-            let val2 = 2;
-
-
-            let name = self.func_name.clone();
-
-            let func_name = PyString::new(py, &name);
+            // let key1 = "key1";
+            // let val1 = 1;
+            // let key2 = "key2";
+            // let val2 = 2;
+            //
+            //
+            // let name = self.func_name.clone();
+            //
+            // let func_name = PyString::new(py, &name);
             //
             // let func: Py<PyAny> = PyModule::from_code(py, &self.code, "", "")
             //     .unwrap()
@@ -56,14 +53,5 @@ impl Task {
         });
 
         Ok(())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::task::*;
-
-    #[test]
-    fn test_run() {
     }
 }

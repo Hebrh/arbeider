@@ -4,8 +4,7 @@ use std::{io, thread};
 use std::time::Duration;
 use std::sync::Arc;
 
-use tokio::runtime::{Builder as RuntimeBuilder, Handle};
-use tokio::net::{TcpListener, TcpStream};
+use tokio::runtime::{Builder as RuntimeBuilder};
 use tokio::sync::oneshot;
 
 use crate::worker::Worker;

@@ -2,12 +2,10 @@
 
 use std::future::Future;
 use std::sync::Arc;
-use tokio::net::{TcpListener, TcpStream};
-use tokio::task::{JoinError, JoinHandle};
+use tokio::task::{JoinHandle};
 use tokio::runtime::{Handle};
 
 use crate::dropper::Dropper;
-use crate::task::Task;
 
 /// A worker to run tasks
 #[derive(Clone, Debug)]

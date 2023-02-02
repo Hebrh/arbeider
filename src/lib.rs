@@ -6,6 +6,7 @@ pub mod worker;
 pub mod task;
 pub mod indicator;
 pub mod mock;
+pub mod cal;
 
 use stage::Stage;
 

@@ -4,16 +4,13 @@ use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
 
-use arrow_array::{ArrayRef, StringArray, Float64Array, Int32Array, ListArray, Int64Array};
+use arrow_array::{ArrayRef, Float64Array, Int32Array, Int64Array};
 use arrow_array::RecordBatch;
-use arrow_array::types::Int32Type;
 use arrow_schema::{DataType, Field, Schema};
 use chrono::NaiveDate;
 use parquet::arrow::arrow_writer::ArrowWriter;
-use parquet::file;
 use parquet::file::properties::WriterProperties;
 use parquet::basic::Compression;
-use parquet::basic::LogicalType::List;
 
 use crate::indicator::define::Period;
 use crate::mock::price::{DayPrice, mock_price};
@@ -103,13 +100,10 @@ fn mock_batch(schema: Schema, code: i32, price: Vec<(f64, NaiveDate)>) ->
 
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
-    use std::io::Read;
-
     use chrono::NaiveDate;
 
     use crate::indicator::define::Period;
-    use crate::mock::market::{MarketData, mock_parquet};
+    use crate::mock::market::mock_parquet;
 
     #[test]
     fn test_mock() {
