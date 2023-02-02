@@ -42,7 +42,7 @@ pub struct Price {
 }
 
 // Datetime period.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Period {
     pub start: NaiveDate,
     pub end: NaiveDate,
