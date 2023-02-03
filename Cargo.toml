@@ -19,9 +19,10 @@ pyo3 = { version = "0.18.0" , features = ["auto-initialize",
     "extension-module", "abi3-py311"]}
 clap = {version = "4.0.26", features = ["derive", "cargo"]}
 chrono = { version = "0.4.23" }
-parquet = {version= "32.0.0", features=["arrow", "async"]}
-arrow-array= "32.0.0"
+parquet = {version = "32.0.0", features=["arrow", "async"]}
+arrow-array= {version ="32.0.0"}
 arrow-schema= "32.0.0"
+arrow-select = "32.0.0"
 rand = "0.8.5"
 walkdir = "2.3.2"
 
