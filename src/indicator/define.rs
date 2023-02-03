@@ -4,12 +4,14 @@ use chrono::NaiveDate;
 
 /// Portfolio is a set of stocks or other financial assets.
 /// One stock also can be a portfolio.
+#[allow(dead_code)]
 pub struct Portfolio {
     name: String,
     positions: Vec<Position>,
 }
 
 /// Position is amount of asset that you own.
+#[allow(dead_code)]
 pub struct Position {
     /// The asset of the position.
     asset: Asset,
@@ -22,6 +24,7 @@ pub struct Position {
 }
 
 /// Asset include stock, bond, etc.
+#[allow(dead_code)]
 pub struct Asset {
     /// The name of the asset.
     name: String,
@@ -32,6 +35,7 @@ pub struct Asset {
 }
 
 /// Asset price is a series of price of asset in a period.
+#[allow(dead_code)]
 pub struct Price {
     /// The asset of the price.
     asset: Asset,

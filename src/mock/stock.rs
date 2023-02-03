@@ -17,6 +17,7 @@ pub const CY_HEADER: [&str; 1] = ["300"];
 pub const KB_HEADER: [&str; 1] = ["688"];
 
 /// Stock price series
+#[allow(dead_code)]
 pub struct StockPrice {
     /// The code of the stock.Need map to actual stock code.
     code: i32,
@@ -43,32 +44,6 @@ impl StockPrice {
     }
 }
 
-/// mock stock code
-fn code() ->String{
-    let mut code = String::new();
-    let mut rng = rand::thread_rng();
-
-    let header = code_header();
-    code.push_str(header.as_str());
-    for _ in 0..3 {
-        code.push_str(&rng.gen_range(0..10).to_string());
-    }
-    // String to vec<i32>
-    code
-}
-
-/// Randon a stock code header
-fn code_header() -> String {
-    let mut rng = rand::thread_rng();
-    let header = match rng.gen_range(0..4) {
-        0 => SH_HEADER[rng.gen_range(0..SH_HEADER.len())].to_string(),
-        1 => SZ_HEADER[rng.gen_range(0..SZ_HEADER.len())].to_string(),
-        2 => CY_HEADER[rng.gen_range(0..CY_HEADER.len())].to_string(),
-        3 => KB_HEADER[rng.gen_range(0..KB_HEADER.len())].to_string(),
-        _ => SH_HEADER[rng.gen_range(0..SH_HEADER.len())].to_string(),
-    };
-    header
-}
 
 
 #[cfg(test)]

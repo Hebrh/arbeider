@@ -1,6 +1,6 @@
 /// Task is python code that is executed by the worker
 use pyo3::prelude::*;
-use pyo3::types::{PyDict, PyString, PyTuple, PyBytes};
+use pyo3::types::{PyDict, PyTuple, PyBytes};
 
 
 /// Task
@@ -20,7 +20,7 @@ pub struct Task {
 impl Task {
     /// Execute the task
     pub fn run(&self) -> PyResult<()> {
-        Python::with_gil(|py| {
+        // Python::with_gil(|py| {
             // let key1 = "key1";
             // let val1 = 1;
             // let key2 = "key2";
@@ -50,7 +50,7 @@ impl Task {
             // }
             //
             // func.call(py, args, Some(kwargs_dict)).unwrap();
-        });
+        // });
 
         Ok(())
     }

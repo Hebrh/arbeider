@@ -1,7 +1,7 @@
 //! Mock stock price.
 
 use rand;
-use chrono::{NaiveDate, DateTime, Days};
+use chrono::{NaiveDate, Days};
 use rand::Rng;
 
 pub struct DayPrice{
