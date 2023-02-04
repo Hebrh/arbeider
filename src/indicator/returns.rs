@@ -2,8 +2,7 @@
 
 use std::fs::File;
 use std::io;
-use arrow_array::{ArrayRef, Float64Array};
-use arrow_select::window::shift;
+use arrow_array::Float64Array;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
 pub struct Returns {
@@ -25,20 +24,17 @@ impl Returns {
 
     /// Calculate returns.
     pub fn day_returns(&self) -> Float64Array {
-        let pre_prices: ArrayRef = shift(&self.prices, 1).unwrap();
-        let pre_array = pre_prices.as_any().downcast_ref::<Float64Array>().unwrap();
+        // New a builder
+        let mut builder = Float64Array::builder(0);
 
-        let returns = self.prices.iter().zip(pre_array.iter())
-            .map(|(a, b)| {
-                if let (Some(a), Some(b)) = (a, b) {
-                    Some((a - b) / b)
-                } else {
-                    None
-                }
-            })
-            .collect::<Float64Array>();
-
-        returns
+        // Calculate returns from index 1
+        for i in 1..self.prices.len() {
+            let pre_price = self.prices.value(i - 1);
+            let price = self.prices.value(i);
+            let ret = (price - pre_price) / pre_price;
+            builder.append_value(ret);
+        }
+        builder.finish()
     }
 }
 
@@ -70,4 +66,31 @@ fn read_price(path: &str) -> Result<Float64Array, io::Error> {
     }
 
     Ok(builder.finish())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::Instant;
+
+    #[test]
+    fn test_day_returns() {
+        // read a stock price from parquet file
+        let path = "examples/data/600878.parquet";
+
+
+        let mut start = Instant::now();
+        let returns = Returns::from_parquet(path);
+        let mut duration = start.elapsed();
+        println!("read parquet time: {:?}", duration);
+
+        // calculate returns
+        start = Instant::now();
+        let result = returns.day_returns();
+        duration = start.elapsed();
+        println!("returns length:{:?}", result.len());
+        println!("cal_returns time: {:?}", duration);
+
+        assert!(result.len() > 0);
+    }
 }
