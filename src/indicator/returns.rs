@@ -36,6 +36,73 @@ impl Returns {
         }
         builder.finish()
     }
+
+    /// Cumulative returns.
+    pub fn cumulative_returns(&self) -> f64{
+        // Calculate cumulative returns from index 1
+        let mut cum_ret = 0.0;
+        for i in 1..self.prices.len() {
+            let pre_price = self.prices.value(i - 1);
+            let price = self.prices.value(i);
+            let ret = (price - pre_price) / pre_price;
+            cum_ret += ret;
+        }
+        cum_ret
+    }
+
+    /// Max drawdown.
+    pub fn max_drawdown(&self) -> f64 {
+        // Calculate max drawdown from index 1
+        let mut max_drawdown = 0.0;
+        let mut max_price = self.prices.value(0);
+        for i in 1..self.prices.len() {
+            let price = self.prices.value(i);
+            if price > max_price {
+                max_price = price;
+            }
+            let drawdown = (max_price - price) / max_price;
+            if drawdown > max_drawdown {
+                max_drawdown = drawdown;
+            }
+        }
+        max_drawdown
+    }
+
+    /// Sharpe ratio.
+    pub fn sharpe_ratio(&self) -> f64 {
+        // Calculate sharpe ratio from index 1
+        let mut cum_ret = 0.0;
+        let mut cum_ret2 = 0.0;
+        for i in 1..self.prices.len() {
+            let pre_price = self.prices.value(i - 1);
+            let price = self.prices.value(i);
+            let ret = (price - pre_price) / pre_price;
+            cum_ret += ret;
+            cum_ret2 += ret * ret;
+        }
+        let mean = cum_ret / (self.prices.len() - 1) as f64;
+        let std = (cum_ret2 / (self.prices.len() - 1) as f64 - mean * mean).sqrt();
+        mean / std
+    }
+
+    /// Sortino ratio.
+    pub fn sortino_ratio(&self) -> f64 {
+        // Calculate sortino ratio from index 1
+        let mut cum_ret = 0.0;
+        let mut cum_ret2 = 0.0;
+        for i in 1..self.prices.len() {
+            let pre_price = self.prices.value(i - 1);
+            let price = self.prices.value(i);
+            let ret = (price - pre_price) / pre_price;
+            cum_ret += ret;
+            if ret < 0.0 {
+                cum_ret2 += ret * ret;
+            }
+        }
+        let mean = cum_ret / (self.prices.len() - 1) as f64;
+        let std = (cum_ret2 / (self.prices.len() - 1) as f64 - mean * mean).sqrt();
+        mean / std
+    }
 }
 
 /// Read prices array from parquet.
