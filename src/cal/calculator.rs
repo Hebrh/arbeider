@@ -62,12 +62,13 @@ impl Calculator {
         }
         self.files = files;
     }
-
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use arrow_array::Int32Array;
+    use arrow_select::window::shift;
 
     #[test]
     fn test_split() {
@@ -78,5 +79,40 @@ mod tests {
         assert_eq!(calculator.files[0].len(), 50);
         assert_eq!(calculator.files[1].len(), 50);
         // assert_eq!(calculator.files[19].len(), 48);
+    }
+
+    #[test]
+    fn test_shift() {
+        let a: Int32Array = vec![Some(1),
+                                 Some(2),
+                                 Some(3),
+                                 Some(4)].into();
+        let res = shift(&a, 1).unwrap();
+        println!("res:{:?}", res);
+
+        let b = shift(&a, 1).unwrap();
+        println!("b:{:?}", b);
+
+        let b_array = b.as_any().downcast_ref::<Int32Array>().unwrap();
+
+        let c= a.iter().zip(b_array.iter())
+            .map(|(a, b)| {
+                println!("a:{:?}, b:{:?}", a, b);
+                if let (Some(a), Some(b)) = (a, b) {
+                    Some(a - b)
+                } else {
+                    None
+                }
+            })
+            .collect::<Int32Array>();
+
+        println!("c:{:?}", c);
+
+        let expected: Int32Array = vec![None,
+                                        Some(1),
+                                        Some(2),
+                                        Some(3),
+                                        ].into();
+        assert_eq!(res.as_ref(), &expected);
     }
 }

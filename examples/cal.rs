@@ -18,11 +18,12 @@ fn main(){
     let result = cal_returns(&prices);
     let duration = start.elapsed();
     println!("returns length:{:?}", result.len());
+    println!("returns {:?}", result);
     println!("cal_returns time: {:?}", duration);
 }
 
 fn cal_returns(prices: &Float64Array) -> Float64Array {
-    let pre_prices: ArrayRef = shift(&prices, -1).unwrap();
+    let pre_prices: ArrayRef = shift(&prices, 1).unwrap();
     let pre_array = pre_prices.as_any().downcast_ref::<Float64Array>().unwrap();
 
     let returns = prices.iter().zip(pre_array.iter())

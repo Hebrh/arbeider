@@ -43,16 +43,3 @@ impl StockPrice {
         }
     }
 }
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_code() {
-        let code = code();
-        println!("{}", code);
-    }
-}
