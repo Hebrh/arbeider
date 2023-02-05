@@ -160,4 +160,28 @@ mod tests {
 
         assert!(result.len() > 0);
     }
+
+    #[test]
+    fn test_read_time(){
+        // read a stock price from parquet file
+        let mut path = "examples/data/600.parquet";
+
+        let mut start = Instant::now();
+        let mut returns = Returns::from_parquet(path);
+        let mut duration = start.elapsed();
+        println!("read {} parquet time: {:?}", path, duration);
+        println!("returns length:{:?}", returns.prices.len());
+
+        path = "examples/data/600601.parquet";
+        start = Instant::now();
+        returns = Returns::from_parquet(path);
+        duration = start.elapsed();
+        println!("read {} parquet time: {:?}", path, duration);
+
+        assert!(returns.prices.len() > 0);
+        // result:
+        // read examples/data/600.parquet parquet time: 466.52525ms
+        // returns length:1855143
+        // read examples/data/600601.parquet parquet time: 1.749459ms
+    }
 }
