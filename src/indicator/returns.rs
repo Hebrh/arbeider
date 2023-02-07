@@ -68,6 +68,38 @@ impl Returns {
         max_drawdown
     }
 
+    /// Square returns.
+    pub fn square_returns(&self) -> Float64Array {
+        // New a builder
+        let mut builder = Float64Array::builder(0);
+
+        // Calculate square returns from index 1
+        for i in 1..self.prices.len() {
+            let pre_price = self.prices.value(i - 1);
+            let price = self.prices.value(i);
+            let ret = (price - pre_price) / pre_price;
+            builder.append_value(ret * ret);
+        }
+        builder.finish()
+    }
+
+    /// Volatility.
+    pub fn volatility(&self) -> f64 {
+        // Calculate day return.
+        let day_returns = self.day_returns();
+
+        // Calculate square returns.
+        let square_returns = self.square_returns();
+
+        // Calculate volatility.
+        let sum_day = day_returns.iter().sum::<f64>();
+        let sum_square = square_returns.iter().sum::<f64>();
+
+        // Calculate volatility.
+        let mean = sum_day / (self.prices.len() - 1) as f64;
+        (sum_square / (self.prices.len() - 1) as f64 - mean * mean).sqrt()
+    }
+
     /// Sharpe ratio.
     pub fn sharpe_ratio(&self) -> f64 {
         // Calculate sharpe ratio from index 1
@@ -80,8 +112,19 @@ impl Returns {
             cum_ret += ret;
             cum_ret2 += ret * ret;
         }
-        let mean = cum_ret / (self.prices.len() - 1) as f64;
-        let std = (cum_ret2 / (self.prices.len() - 1) as f64 - mean * mean).sqrt();
+        // Calculate day return sum.
+        let sum_day = self.day_returns().iter().sum::<f64>();
+
+        // Calculate returns square sum.
+        let sum_square = self.square_returns().iter().sum::<f64>();
+
+        // Calculate mean.
+        let mean = sum_day / (self.prices.len() - 1) as f64;
+
+        // Calculate std.
+        let std = (sum_square / (self.prices.len() - 1) as f64 - mean * mean).sqrt();
+
+        // Calculate sharpe ratio.
         mean / std
     }
 
