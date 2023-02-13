@@ -7,23 +7,26 @@ use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
 pub struct Returns {
     /// Price array
-    prices: Float64Array
+    prices: Float64Array,
+
+    /// Security code
+    code: i32,
 }
 
 impl Returns {
     /// Create a new Returns struct.
-    pub fn new(prices: Float64Array) -> Self {
-        Self { prices }
+    pub fn new(prices: Float64Array, code: i32) -> Self {
+        Self { prices, code}
     }
 
     /// Get prices array from parquet file.
-    pub fn from_parquet(path: &str) -> Self {
+    pub fn from_parquet(path: &str, code: i32) -> Self {
         let prices = read_price(path).unwrap();
-        Self { prices }
+        Self { prices , code }
     }
 
     /// Calculate returns.
-    pub fn day_returns(&self) -> Float64Array {
+    pub fn day(&self) -> Float64Array {
         // New a builder
         let mut builder = Float64Array::builder(0);
 
@@ -38,7 +41,7 @@ impl Returns {
     }
 
     /// Cumulative returns.
-    pub fn cumulative_returns(&self) -> f64{
+    pub fn cumulative(&self) -> f64{
         // Calculate cumulative returns from index 1
         let mut cum_ret = 0.0;
         for i in 1..self.prices.len() {
@@ -69,7 +72,7 @@ impl Returns {
     }
 
     /// Square returns.
-    pub fn square_returns(&self) -> Float64Array {
+    pub fn square(&self) -> Float64Array {
         // New a builder
         let mut builder = Float64Array::builder(0);
 
@@ -86,14 +89,16 @@ impl Returns {
     /// Volatility.
     pub fn volatility(&self) -> f64 {
         // Calculate day return.
-        let day_returns = self.day_returns();
+        let day_returns = self.day();
 
         // Calculate square returns.
-        let square_returns = self.square_returns();
+        let square_returns = self.square();
 
         // Calculate volatility.
-        let sum_day = day_returns.iter().sum::<f64>();
-        let sum_square = square_returns.iter().sum::<f64>();
+        // sum day returns
+        let sum_day = day_returns.values().iter().sum::<f64>();
+        // let sum_day = day_returns.iter().sum::<f64>();
+        let sum_square = square_returns.values().iter().sum::<f64>();
 
         // Calculate volatility.
         let mean = sum_day / (self.prices.len() - 1) as f64;
@@ -113,10 +118,10 @@ impl Returns {
             cum_ret2 += ret * ret;
         }
         // Calculate day return sum.
-        let sum_day = self.day_returns().iter().sum::<f64>();
+        let sum_day = self.day().values().iter().sum::<f64>();
 
         // Calculate returns square sum.
-        let sum_square = self.square_returns().iter().sum::<f64>();
+        let sum_square = self.square().values().iter().sum::<f64>();
 
         // Calculate mean.
         let mean = sum_day / (self.prices.len() - 1) as f64;
@@ -196,7 +201,7 @@ mod tests {
 
         // calculate returns
         start = Instant::now();
-        let result = returns.day_returns();
+        let result = returns.day();
         duration = start.elapsed();
         println!("returns length:{:?}", result.len());
         println!("cal_returns time: {:?}", duration);

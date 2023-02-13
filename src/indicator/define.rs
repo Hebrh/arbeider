@@ -61,12 +61,12 @@ pub enum AssetKind {
 
 /// Category of stock
 pub enum StockCategory {
-    /// Shanghai Stock Exchange
+    /// Shanghai Stock Exchange，0
     SH,
-    /// Shenzhen Stock Exchange
+    /// Shenzhen Stock Exchange, 1
     SZ,
-    /// Startup Edition stock exchange. 创业版
+    /// Startup Edition stock exchange. 创业版, 2
     CY,
-    /// Tech board stock exchange. 科创板
+    /// Tech board stock exchange. 科创板, 3
     KB,
 }
