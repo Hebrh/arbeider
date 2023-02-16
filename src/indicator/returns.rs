@@ -107,16 +107,6 @@ impl Returns {
 
     /// Sharpe ratio.
     pub fn sharpe_ratio(&self) -> f64 {
-        // Calculate sharpe ratio from index 1
-        let mut cum_ret = 0.0;
-        let mut cum_ret2 = 0.0;
-        for i in 1..self.prices.len() {
-            let pre_price = self.prices.value(i - 1);
-            let price = self.prices.value(i);
-            let ret = (price - pre_price) / pre_price;
-            cum_ret += ret;
-            cum_ret2 += ret * ret;
-        }
         // Calculate day return sum.
         let sum_day = self.day().values().iter().sum::<f64>();
 

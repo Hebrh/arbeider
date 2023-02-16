@@ -25,7 +25,6 @@ arrow-schema= "32.0.0"
 arrow-select = "32.0.0"
 rand = "0.8.5"
 walkdir = "2.3.2"
-paste = "1.0.11"
 
 [build-dependencies]
 pyo3-build-config = "0.18.0"

@@ -1,17 +1,12 @@
 //! Calculator for parquet files.
 
 use arrow_array::Float64Array;
-use walkdir::WalkDir;
 
-use paste::paste;
 use crate::indicator::returns::Returns;
 
 pub struct Calculator {
     /// The parquet file path.
     pub path: String,
-
-    /// Parquet file path list.
-    pub filepaths: Vec<String>,
 }
 
 /// Pipeline struct for calculate a series of indicator and security match.
@@ -61,8 +56,7 @@ impl PipelineResult {
 impl Default for Calculator {
     fn default() -> Self {
         Self {
-            path: ".".to_string(),
-            filepaths: vec![],
+            path: ".".to_string()
         }
     }
 }
@@ -72,24 +66,6 @@ impl Calculator {
     pub fn new(path: String) -> Self {
         Self {
             path,
-            filepaths: vec![],
-        }
-    }
-
-    /// Read parquet files from path.
-    pub fn read_files(&mut self) {
-        let walkdir = WalkDir::new(&self.path).into_iter().filter_map(|e| e.ok());
-        for entry in walkdir {
-            if entry.file_type().is_file() {
-                // if no extension
-                if entry.path().extension().is_none() {
-                    continue;
-                }
-                // if extension is parquet
-                if entry.path().extension().unwrap() == "parquet" {
-                    self.filepaths.push(entry.path().to_str().unwrap().to_string());
-                }
-            }
         }
     }
 
@@ -101,7 +77,7 @@ impl Calculator {
         // loop all pipelines
         for pipeline in pipelines {
             // Initialize a Float64 result array
-            let mut values:Vec<Float64Array> = vec![Float64Array::from
+            let mut values: Vec<Float64Array> = vec![Float64Array::from
                 (vec![0.0])];
 
             // loop all indicators
@@ -156,23 +132,36 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_read() {
-        // Calculate read file time
+    fn test_workflow() {
         let mut calculator = Calculator::new("examples/data/".to_string());
-        calculator.read_files();
-        assert!(calculator.filepaths.len() > 0);
-    }
+        let mut pipelines: Vec<Pipeline> = vec![];
 
+        // read securities code list from parquet file
+        let path = "examples/data/funds_prices.parquet";
 
-    #[test]
-    fn test_find() {
-        // Calculate find file name time
-        let mut calculator = Calculator::new("examples/data/".to_string());
-        calculator.read_files();
+        // construct a pipeline
+        let pipeline = Pipeline {
+            code: 000001,
+            filepath: path.to_string(),
+            indicators: vec!["day".to_string(),
+                             "cumulative".to_string(),
+                             "max_drawdown".to_string(),
+                             "square".to_string(),
+                             "volatility".to_string(),
+                             "sharpe_ratio".to_string(),
+                             "sortino_ratio".to_string()],
+        };
 
-        let start = Instant::now();
-        calculator.day_returns("examples/data/600878.parquet");
-        let duration = start.elapsed();
-        println!("Time elapsed in find() is: {:?}", duration);
+        // calculate all pipelines
+        let now = Instant::now();
+        let results = calculator.workflow(pipelines);
+        println!("Time elapsed in calculate all pipelines is: {:?}", now.elapsed());
+
+        // loop all results
+        for result in results {
+            println!("code: {}", result.code);
+            println!("indicators: {:?}", result.indicators);
+            println!("results: {:?}", result.results);
+        }
     }
 }
