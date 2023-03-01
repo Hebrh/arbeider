@@ -2,14 +2,14 @@
 
 use std::future::Future;
 use std::sync::Arc;
-use tokio::task::{JoinHandle};
-use tokio::runtime::{Handle};
+use tokio::runtime::Handle;
+use tokio::task::JoinHandle;
 
-use crate::dropper::Dropper;
+use crate::worker::dropper::Dropper;
 
 /// A worker to run tasks
 #[derive(Clone, Debug)]
-pub struct Worker {
+pub struct Executor {
     /// Tokio handle
     pub(crate) handle: Handle,
 
@@ -17,15 +17,14 @@ pub struct Worker {
     pub(crate) _dropper: Arc<Dropper>,
 }
 
-
-impl Worker {
+impl Executor {
     /// Spawn a future and execute it in this thread pool
     ///
     /// Similar to tokio::runtime::Runtime::spawn()
     pub fn spawn<F>(&self, future: F) -> JoinHandle<F::Output>
-        where
-            F: Future + Send + 'static,
-            F::Output: Send + 'static,
+    where
+        F: Future + Send + 'static,
+        F::Output: Send + 'static,
     {
         self.handle.spawn(future)
     }
@@ -33,9 +32,9 @@ impl Worker {
     /// Run the provided function on an executor dedicated to blocking
     /// operations.
     pub fn spawn_blocking<F, R>(&self, func: F) -> JoinHandle<R>
-        where
-            F: FnOnce() -> R + Send + 'static,
-            R: Send + 'static,
+    where
+        F: FnOnce() -> R + Send + 'static,
+        R: Send + 'static,
     {
         self.handle.spawn_blocking(func)
     }
@@ -48,7 +47,7 @@ impl Worker {
 
 #[cfg(test)]
 mod tests {
-    use crate::builder::Builder;
+    use crate::worker::builder::Builder;
 
     #[test]
     fn test_spawn() {

@@ -1,10 +1,11 @@
 //! Security returns.
 
-use std::fs::File;
-use std::io;
 use arrow_array::Float64Array;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
+use std::fs::File;
+use std::io;
 
+#[allow(dead_code)]
 pub struct Returns {
     /// Price array
     prices: Float64Array,
@@ -16,13 +17,13 @@ pub struct Returns {
 impl Returns {
     /// Create a new Returns struct.
     pub fn new(prices: Float64Array, code: i32) -> Self {
-        Self { prices, code}
+        Self { prices, code }
     }
 
     /// Get prices array from parquet file.
     pub fn from_parquet(path: &str, code: i32) -> Self {
         let prices = read_price(path).unwrap();
-        Self { prices , code }
+        Self { prices, code }
     }
 
     /// Calculate returns.
@@ -41,7 +42,7 @@ impl Returns {
     }
 
     /// Cumulative returns.
-    pub fn cumulative(&self) -> f64{
+    pub fn cumulative(&self) -> f64 {
         // Calculate cumulative returns from index 1
         let mut cum_ret = 0.0;
         for i in 1..self.prices.len() {
@@ -151,19 +152,21 @@ fn read_price(path: &str) -> Result<Float64Array, io::Error> {
     let builder = ParquetRecordBatchReaderBuilder::try_new(file).unwrap();
 
     // New a reader
-    let mut reader = builder.build().unwrap();
+    let reader = builder.build().unwrap();
 
     // New a builder
     let mut builder = Float64Array::builder(0);
 
     // Read a batch and push to price vector
-    while let Some(batch) = reader.next() {
-
+    for batch in reader {
         let batch_data = batch.unwrap();
 
         // column 1 is close price: code-price-date
-        let close = batch_data.column(1).as_any().downcast_ref::<Float64Array>()
-                              .unwrap();
+        let close = batch_data
+            .column(1)
+            .as_any()
+            .downcast_ref::<Float64Array>()
+            .unwrap();
 
         for i in 0..close.len() {
             builder.append_value(close.value(i));
@@ -183,40 +186,39 @@ mod tests {
         // read a stock price from parquet file
         let path = "examples/data/600878.parquet";
 
-
         let mut start = Instant::now();
-        let returns = Returns::from_parquet(path);
+        let returns = Returns::from_parquet(path, 600878);
         let mut duration = start.elapsed();
-        println!("read parquet time: {:?}", duration);
+        println!("read parquet time: {duration:?}");
 
         // calculate returns
         start = Instant::now();
         let result = returns.day();
         duration = start.elapsed();
         println!("returns length:{:?}", result.len());
-        println!("cal_returns time: {:?}", duration);
+        println!("cal_returns time: {duration:?}");
 
-        assert!(result.len() > 0);
+        assert!(!result.is_empty());
     }
 
     #[test]
-    fn test_read_time(){
+    fn test_read_time() {
         // read a stock price from parquet file
         let mut path = "examples/data/600.parquet";
 
         let mut start = Instant::now();
-        let mut returns = Returns::from_parquet(path);
+        let mut returns = Returns::from_parquet(path, 600878);
         let mut duration = start.elapsed();
-        println!("read {} parquet time: {:?}", path, duration);
+        println!("read {path} parquet time: {duration:?}");
         println!("returns length:{:?}", returns.prices.len());
 
         path = "examples/data/600601.parquet";
         start = Instant::now();
-        returns = Returns::from_parquet(path);
+        returns = Returns::from_parquet(path, 600878);
         duration = start.elapsed();
-        println!("read {} parquet time: {:?}", path, duration);
+        println!("read {path} parquet time: {duration:?}");
 
-        assert!(returns.prices.len() > 0);
+        assert!(!returns.prices.is_empty());
         // result:
         // read examples/data/600.parquet parquet time: 466.52525ms
         // returns length:1855143

@@ -1,14 +1,11 @@
 //! Worker Library.
-pub mod stage;
-pub mod builder;
-mod dropper;
-pub mod worker;
-pub mod task;
+pub mod cal;
 pub mod indicator;
 pub mod mock;
-pub mod cal;
+pub mod scheduler;
+pub mod worker;
 
-use stage::Stage;
+use worker::remote_func;
 
 // pyO3 module
 use pyo3::prelude::*;
@@ -16,6 +13,7 @@ use pyo3::prelude::*;
 #[pymodule]
 pub fn internal(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     // the pymodule class to make the rustPyFunctions available
-    m.add_class::<Stage>()?;
+    m.add_function(wrap_pyfunction!(remote_func, m)?)?;
+
     Ok(())
 }

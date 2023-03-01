@@ -1,1 +1,4 @@
 maturin == 0.14.10
+cloudpickle == 2.0.0
+arbeider~=0.1.0
+setuptools~=66.1.1

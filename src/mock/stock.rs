@@ -28,10 +28,7 @@ pub struct StockPrice {
 }
 
 impl StockPrice {
-    pub fn new(
-        start: NaiveDate,
-        end: NaiveDate,
-        category: StockCategory) -> Self {
+    pub fn new(start: NaiveDate, end: NaiveDate, category: StockCategory) -> Self {
         // random a stock code
         let code: i32 = rand::thread_rng().gen_range(0..10000);
 

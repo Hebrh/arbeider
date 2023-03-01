@@ -1,14 +1,13 @@
-/// Builder for create worker instance.
-
-use std::{io, thread};
-use std::time::Duration;
 use std::sync::Arc;
+use std::time::Duration;
+/// Builder for create worker instance.
+use std::{io, thread};
 
-use tokio::runtime::{Builder as RuntimeBuilder};
+use tokio::runtime::Builder as RuntimeBuilder;
 use tokio::sync::oneshot;
 
-use crate::worker::Worker;
-use crate::dropper::Dropper;
+use super::dropper::Dropper;
+use super::executor::Executor;
 
 pub struct Builder {
     /// The id of this worker
@@ -60,7 +59,7 @@ impl Builder {
         self
     }
 
-    pub fn build(&mut self) -> Result<Worker, io::Error> {
+    pub fn build(&mut self) -> Result<Executor, io::Error> {
         let worker = self
             .builder
             .enable_all()
@@ -74,7 +73,7 @@ impl Builder {
             .name(format!("{}-blocker", self.id))
             .spawn(move || worker.block_on(recv_stop));
 
-        Ok(Worker {
+        Ok(Executor {
             handle,
             _dropper: Arc::new(Dropper {
                 close: Some(send_stop),
@@ -82,4 +81,3 @@ impl Builder {
         })
     }
 }
-
