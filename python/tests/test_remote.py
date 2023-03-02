@@ -1,11 +1,6 @@
 from arbeider import remote
 
 
-@remote
-def adder(x, y, z):
-    return x + y + z
-
-
 def intro(name, age):
     print(f'Hello {name}, you are {age} years old.')
 
@@ -18,6 +13,11 @@ def plus(*args):
 def multi(**kwargs):
     print(f'typeof kwargs: {type(kwargs)}')
     print(f'{kwargs}')
+
+
+@remote
+def adder(x, y, z):
+    return x + y + z
 
 
 def test_remote():

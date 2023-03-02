@@ -1,4 +1,4 @@
-//! Task list management.
+//! Task define.
 
 use std::sync::Arc;
 
