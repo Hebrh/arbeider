@@ -53,5 +53,7 @@ mod tests {
         println!("json: {json}");
         let signal: Signal = serde_json::from_str(&json).unwrap();
         println!("signal: {signal:?}");
+        let code = String::from_utf8(signal.task.unwrap()[0].code.clone()).unwrap();
+        println!("code: {code}");
     }
 }
