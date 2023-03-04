@@ -5,6 +5,7 @@ pub mod indicator;
 pub mod mock;
 pub mod scheduler;
 mod task;
+mod transmit;
 pub mod worker;
 
 use client::{remote, remote_sync};

@@ -24,7 +24,11 @@ arrow-array= {version ="32.0.0"}
 arrow-schema= "32.0.0"
 arrow-select = "32.0.0"
 rand = "0.8.5"
-walkdir = "2.3.2"
+serde = "1.0.152"
+serde_json = "1.0.93"
+serde_bytes = "0.11.9"
+
+
 
 [build-dependencies]
 pyo3-build-config = "0.18.0"

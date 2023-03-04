@@ -1,6 +1,7 @@
 //! Worker library.
 pub mod func;
 use crate::task::Task;
+use crate::transmit::Server;
 
 /// Worker struct.
 pub struct Worker {
@@ -12,6 +13,6 @@ pub struct Worker {
     pub address: String,
     /// The worker port.
     pub port: u16,
-    /// The worker tasks.
-    pub tasks: Vec<Task>,
+    /// Worker server.
+    pub server: Server,
 }
