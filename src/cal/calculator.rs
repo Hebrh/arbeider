@@ -56,7 +56,7 @@ impl PipelineResult {
 impl Default for Calculator {
     fn default() -> Self {
         Self {
-            path: ".".to_string()
+            path: ".".to_string(),
         }
     }
 }
@@ -64,9 +64,7 @@ impl Default for Calculator {
 impl Calculator {
     /// Construct a calculator.
     pub fn new(path: String) -> Self {
-        Self {
-            path,
-        }
+        Self { path }
     }
 
     /// Calculate a workflow for a series of indicator and security match.
@@ -77,8 +75,7 @@ impl Calculator {
         // loop all pipelines
         for pipeline in pipelines {
             // Initialize a Float64 result array
-            let mut values: Vec<Float64Array> = vec![Float64Array::from
-                (vec![0.0])];
+            let mut values: Vec<Float64Array> = vec![Float64Array::from(vec![0.0])];
 
             // loop all indicators
             for indicator in &pipeline.indicators {
@@ -117,8 +114,7 @@ impl Calculator {
             }
 
             // construct a pipeline result
-            let pipeline_result = PipelineResult::new(pipeline.code, pipeline
-                .indicators, values);
+            let pipeline_result = PipelineResult::new(pipeline.code, pipeline.indicators, values);
             results.push(pipeline_result);
         }
         results
@@ -133,8 +129,8 @@ mod tests {
 
     #[test]
     fn test_workflow() {
-        let mut calculator = Calculator::new("examples/data/".to_string());
-        let mut pipelines: Vec<Pipeline> = vec![];
+        let calculator = Calculator::new("examples/data/".to_string());
+        let pipelines: Vec<Pipeline> = vec![];
 
         // read securities code list from parquet file
         let path = "examples/data/funds_prices.parquet";
@@ -143,19 +139,24 @@ mod tests {
         let pipeline = Pipeline {
             code: 000001,
             filepath: path.to_string(),
-            indicators: vec!["day".to_string(),
-                             "cumulative".to_string(),
-                             "max_drawdown".to_string(),
-                             "square".to_string(),
-                             "volatility".to_string(),
-                             "sharpe_ratio".to_string(),
-                             "sortino_ratio".to_string()],
+            indicators: vec![
+                "day".to_string(),
+                "cumulative".to_string(),
+                "max_drawdown".to_string(),
+                "square".to_string(),
+                "volatility".to_string(),
+                "sharpe_ratio".to_string(),
+                "sortino_ratio".to_string(),
+            ],
         };
 
         // calculate all pipelines
         let now = Instant::now();
         let results = calculator.workflow(pipelines);
-        println!("Time elapsed in calculate all pipelines is: {:?}", now.elapsed());
+        println!(
+            "Time elapsed in calculate all pipelines is: {:?}",
+            now.elapsed()
+        );
 
         // loop all results
         for result in results {
