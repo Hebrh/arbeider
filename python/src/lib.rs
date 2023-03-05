@@ -1,13 +1,8 @@
 //! Worker Library.
-pub mod cal;
-pub mod client;
-pub mod indicator;
-pub mod mock;
-pub mod scheduler;
-mod task;
-pub mod worker;
 
-use client::{remote, remote_sync};
+mod client;
+
+use crate::client::{remote, remote_sync};
 
 // pyO3 module
 use pyo3::prelude::*;

@@ -1,5 +1,5 @@
 //! Job.
-use crate::task::{Back, Task};
+use crate::{Back, Task};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

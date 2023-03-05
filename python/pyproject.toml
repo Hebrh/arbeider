@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-description = "Python function runtime powered by tokio(Rust)"
+description = "Python function runtime powered by Rust"
 requires-python = ">=3.11"
 name = 'arbeider'
 readme = "README.md"
@@ -23,9 +23,6 @@ dynamic = ["version"]
 [project.urls]
 "Bug Tracker" = "https://github.com/lipicoder/arbeider/issues"
 "Homepage" = "https://github.com/lipicoder/arbeider"
-
-[tool.maturin]
-python-source = "python"
 
 # See the docstring in versioneer.py for instructions. Note that you must
 # re-run 'versioneer.py setup' after changing this section, and commit the

@@ -1,7 +1,7 @@
 //! Protocol for scheduler.
-use crate::task::back::Back;
-use crate::task::job::Job;
 use serde::{Deserialize, Serialize};
+use task::Back;
+use task::Job;
 use uuid::Uuid;
 
 /// signal type.
@@ -42,8 +42,8 @@ pub struct Signal {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::task::Task;
     use serde_json;
+    use task::Task;
 
     #[test]
     fn test_signal() {
@@ -53,7 +53,7 @@ mod tests {
             .into_bytes();
 
         let signal = Signal {
-            _type: SignalType::Submit,
+            category: Category::Submit,
             id: Some(Uuid::new_v4()),
             job: Some(Job::new(
                 Uuid::new_v4(),
@@ -61,6 +61,7 @@ mod tests {
                 vec![],
             )),
             back: None,
+            effect: true,
         };
         let json = serde_json::to_string(&signal).unwrap();
         println!("json: {json}");

@@ -1,15 +1,6 @@
-//! Task define.
-
+//! Task struct define.
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
-pub mod back;
-pub mod func;
-pub mod job;
-
-pub use back::Back;
-pub use func::Func;
-pub use job::Job;
 
 #[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct Task {

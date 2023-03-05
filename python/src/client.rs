@@ -1,5 +1,4 @@
 //! Python client support.
-//! Worker library.
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyString, PyTuple};
 

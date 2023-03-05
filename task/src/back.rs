@@ -1,5 +1,5 @@
 //! Task return back.
-use crate::task::Task;
+use crate::define::Task;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use uuid::Uuid;

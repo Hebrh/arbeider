@@ -14,9 +14,9 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     url="https://github.com/lipicoder/arbeider",
-    author="lipi,zhujw",
-    author_email="lipicoder@qq.com, kratoswittgenstein@gmail.com",
-    description="Exchange data between database and parquet files",
+    author="lipi",
+    author_email="lipicoder@qq.com",
+    description="Python function runtime powered by Rust",
     long_description=long_desc,
     zip_safe=True,
     classifiers=[

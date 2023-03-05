@@ -1,0 +1,39 @@
+[package]
+name = "ariberder-python"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+homepage = "https://lipicoder.github.io/arbeider"
+documentation = "https://lipicoder.github.io/arbeider"
+repository = "https://github.com/lipicoder/arbeider"
+readme = "README.md"
+description = "A simple, fast, and lightweight task runner for Python"
+
+[package.metadata.maturin]
+name = "arbeider.internal"
+
+[dependencies]
+uuid = {version="1.2.2", features=["serde", "v4"]}
+pyo3 = { version = "0.18.0" , features = ["auto-initialize",
+    "extension-module", "abi3-py311"]}
+clap = {version = "4.0.26", features = ["derive", "cargo"]}
+chrono = { version = "0.4.23" }
+parquet = {version = "34.0.0", features=["arrow", "async"]}
+arrow-array= {version ="34.0.0"}
+arrow-schema= "34.0.0"
+arrow-select = "34.0.0"
+rand = "0.8.5"
+serde = {version="1.0.152", features=["derive"]}
+serde_json = "1.0.93"
+serde_bytes = "0.11.9"
+
+[build-dependencies]
+pyo3-build-config = "0.18.0"
+
+[dev-dependencies]
+criterion = "0.4.0"
+
+[lib]
+name = "arbeider_python"
+path = "src/lib.rs"
+crate-type = ["cdylib","rlib"]

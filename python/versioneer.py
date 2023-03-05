@@ -270,7 +270,7 @@ To upgrade your project to a new release of Versioneer, do the following:
 
 This tool is designed to make it easily extended to other version-control
 systems: all VCS-specific components are in separate directories like
-src/git/ . The top-level `versioneer.py` script is assembled from these
+deprecate/git/ . The top-level `versioneer.py` script is assembled from these
 components by running make-versioneer.py . In the future, make-versioneer.py
 will take a VCS name as an argument, and will construct a version of
 `versioneer.py` that is specific to the given VCS. It might also take the
@@ -1380,7 +1380,7 @@ def do_vcs_install(versionfile_source, ipy):
         files.append(versioneer_file)
     present = False
     try:
-        with open(".gitattributes", "r") as fobj:
+        with open("../.gitattributes", "r") as fobj:
             for line in fobj:
                 if line.strip().startswith(versionfile_source):
                     if "export-subst" in line.strip().split()[1:]:
@@ -1389,7 +1389,7 @@ def do_vcs_install(versionfile_source, ipy):
     except OSError:
         pass
     if not present:
-        with open(".gitattributes", "a+") as fobj:
+        with open("../.gitattributes", "a+") as fobj:
             fobj.write(f"{versionfile_source} export-subst\n")
         files.append(".gitattributes")
     run_command(GITS, ["add", "--"] + files)
@@ -2057,7 +2057,7 @@ a section like:
  [versioneer]
  VCS = git
  style = pep440
- versionfile_source = src/myproject/_version.py
+ versionfile_source = deprecate/myproject/_version.py
  versionfile_build = myproject/_version.py
  tag_prefix =
  parentdir_prefix = myproject-

@@ -1,12 +1,12 @@
 //! Scheduler library.
 
-pub mod signal;
+mod signal;
 
-use crate::scheduler::signal::{Category, Signal};
-use crate::task::back::Back;
-use crate::task::job::Job;
+use signal::{Category, Signal};
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use task::Back;
+use task::Job;
 use uuid::Uuid;
 
 /// Scheduler server struct.
