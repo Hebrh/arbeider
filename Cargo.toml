@@ -1,10 +1,10 @@
-
 [workspace]
 exclude = ["python"]
 members = [
     "task",
     "scheduler",
     "worker",
+    "cli"
 ]
 
 # cargo build --profile release-lto

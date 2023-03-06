@@ -7,7 +7,7 @@ homepage = "https://lipicoder.github.io/arbeider"
 documentation = "https://lipicoder.github.io/arbeider"
 repository = "https://github.com/lipicoder/arbeider"
 readme = "README.md"
-description = "Arbeider scheduler server"
+description = "Arbeider worker manager"
 
 
 [dependencies]
