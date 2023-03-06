@@ -1,5 +1,5 @@
 [package]
-name = "ariberder-worker"
+name = "aworker"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
@@ -12,6 +12,7 @@ description = "Arbeider scheduler server"
 
 [dependencies]
 uuid = {version="1.2.2", features=["serde", "v4"]}
+clap = {version = "4.0.26", features = ["derive", "cargo"]}
 pyo3 = { version = "0.18.0" , features = ["auto-initialize",
     "extension-module", "abi3-py311"]}
 serde = {version="1.0.152", features=["derive"]}
