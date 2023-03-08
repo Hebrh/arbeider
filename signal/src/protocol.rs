@@ -1,5 +1,6 @@
 //! Protocol for scheduler.
 use serde::{Deserialize, Serialize};
+use std::io::Read;
 use task::Back;
 use task::Job;
 use uuid::Uuid;
@@ -7,20 +8,29 @@ use uuid::Uuid;
 /// signal type.
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq)]
 pub enum Category {
+    /// Worker register to scheduler.
+    Register,
+    RegisterBack,
+
     /// Client Submit Task signal.
     Submit,
-    /// Client get task result signal.
+    SubmitBack,
+
+    /// Client get task.
     Get,
+    GetBack,
+
     /// Worker Request Task signal.
+    // request do not need.
     Request,
-    /// Scheduler send task to worker.
-    Send,
-    /// Worker send task result to scheduler.
-    Result,
+    RequestBack,
+
     /// Client Cancel Task signal.
     Cancel,
+    CancelBack,
     /// Heartbeat signal.
     Heartbeat,
+    HeartbeatBack,
 }
 
 /// Signal struct.
@@ -28,7 +38,7 @@ pub enum Category {
 pub struct Signal {
     /// The signal type.
     pub category: Category,
-    /// Task id.
+    /// id. Job id or Worker id.
     pub id: Option<Uuid>,
     /// The signal data.
     pub job: Option<Job>,
@@ -38,11 +48,30 @@ pub struct Signal {
     pub effect: bool,
 }
 
+impl Signal {
+    /// Create signal from TcpStream.
+    pub fn from_stream(stream: &mut std::net::TcpStream) -> Option<Self> {
+        let mut buffer = Vec::new();
+
+        if stream.read_to_end(&mut buffer).is_err() {
+            return None;
+        }
+
+        let signal = String::from_utf8_lossy(&buffer[..]);
+        let signal = signal.trim_matches(char::from(0));
+        let result = serde_json::from_str(signal);
+
+        match result {
+            Ok(signal) => Some(signal),
+            Err(_) => None,
+        }
+    }
+}
+
 /// tests
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json;
     use task::Task;
 
     #[test]

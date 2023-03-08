@@ -1,7 +1,5 @@
 //! Scheduler library.
 
-mod signal;
-
 use signal::{Category, Signal};
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
@@ -21,6 +19,8 @@ pub struct Scheduler {
     pub job: Vec<Job>,
     /// Job execute result.
     pub back: Vec<Back>,
+    /// Worker list.
+    pub worker: Vec<Uuid>,
 }
 
 impl Default for Scheduler {
@@ -31,6 +31,7 @@ impl Default for Scheduler {
             port: 27021,
             job: Vec::new(),
             back: Vec::new(),
+            worker: Vec::new(),
         }
     }
 }
@@ -44,6 +45,7 @@ impl Scheduler {
             port,
             job: Vec::new(),
             back: Vec::new(),
+            worker: Vec::new(),
         }
     }
 
@@ -81,10 +83,38 @@ impl Scheduler {
         let signal = signal.trim_matches(char::from(0));
         let signal: Signal = serde_json::from_str(signal).unwrap();
 
+        // Worker register
+        if signal.category == Category::Register {
+            // save worker id
+            self.worker.push(signal.id.unwrap());
+
+            // send register back to worker
+            let signal = Signal {
+                category: Category::Register,
+                id: Some(self.id),
+                job: None,
+                back: None,
+                effect: true,
+            };
+
+            // send Register signal to worker
+            self.send(stream, signal)
+        }
+
         // Client submit task
         if signal.category == Category::Submit {
             // push task to queue
-            self.job.push(signal.job.unwrap())
+            self.job.push(signal.job.unwrap());
+
+            // send submit back to client
+            let signal = Signal {
+                category: Category::Submit,
+                id: signal.id,
+                job: None,
+                back: None,
+                effect: true,
+            };
+            self.send(stream, signal)
         }
 
         // Worker get task
@@ -95,7 +125,7 @@ impl Scheduler {
 
             let signal = if let Some(back) = back {
                 Signal {
-                    category: Category::Result,
+                    category: Category::GetBack,
                     id: signal.id,
                     job: None,
                     back: Some(back.clone()),
@@ -103,7 +133,7 @@ impl Scheduler {
                 }
             } else {
                 Signal {
-                    category: Category::Result,
+                    category: Category::GetBack,
                     id: signal.id,
                     job: None,
                     back: None,
@@ -118,23 +148,27 @@ impl Scheduler {
         // Worker get task to run.
         if signal.category == Category::Request {
             // new Send signal
-            let job = self.job.pop().unwrap();
-            let signal = Signal {
-                category: Category::Send,
-                id: signal.id,
-                job: Some(job),
-                back: None,
-                effect: true,
+            let job = self.job.pop();
+
+            let signal = match job {
+                Some(job) => Signal {
+                    category: Category::RegisterBack,
+                    id: signal.id,
+                    job: Some(job),
+                    back: None,
+                    effect: true,
+                },
+                None => Signal {
+                    category: Category::RegisterBack,
+                    id: signal.id,
+                    job: None,
+                    back: None,
+                    effect: false,
+                },
             };
 
             // send to worker
             self.send(stream, signal)
-        }
-
-        // Worker return task result.
-        if signal.category == Category::Result {
-            // Save job result to result list.
-            self.back.push(signal.back.unwrap())
         }
 
         // Client cancel task.
@@ -168,7 +202,7 @@ impl Scheduler {
         if signal.category == Category::Heartbeat {
             // new Heartbeat signal
             let signal = Signal {
-                category: Category::Heartbeat,
+                category: Category::HeartbeatBack,
                 id: signal.id,
                 job: None,
                 back: None,
@@ -185,16 +219,5 @@ impl Scheduler {
         let json = serde_json::to_string(&signal).unwrap();
         let json = json.as_bytes();
         stream.write_all(json).unwrap();
-    }
-
-    /// Parse the signal from stream.
-    pub fn parse(&self, stream: &mut TcpStream) -> Option<Signal> {
-        let mut buf = Vec::new();
-        stream.read_to_end(&mut buf).unwrap();
-        let signal = String::from_utf8_lossy(&buf[..]);
-        let signal = signal.trim_matches(char::from(0));
-        let signal: Signal = serde_json::from_str(signal).unwrap();
-
-        Some(signal)
     }
 }

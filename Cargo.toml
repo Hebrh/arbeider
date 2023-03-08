@@ -2,6 +2,7 @@
 exclude = ["python"]
 members = [
     "task",
+    "signal",
     "scheduler",
     "worker",
     "cli"

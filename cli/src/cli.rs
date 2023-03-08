@@ -3,13 +3,12 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(author, version, about, long_about= None)]
+#[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
 }
 
-/// Level one command.
 #[derive(Subcommand)]
 pub enum Commands {
     #[command(author, version, about = "arb scheduler command")]
@@ -76,6 +75,4 @@ pub struct WorkerArgs {
         default_value = "127.0.0.1:27021"
     )]
     address: Option<String>,
-    #[arg(short, long)]
-    name: Option<u8>,
 }
